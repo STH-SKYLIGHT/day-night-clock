@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="点阵世界时钟，实时昼夜与所在位置。">
+  <title>昼夜 · 世界时钟</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8'/%3E%3Ccircle cx='16' cy='16' r='9' fill='%23ff160b'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="map-data.js" defer></script>
+  <script src="clock.js" defer></script>
+</head>
+<body>
+  <main class="clock-face">
+    <canvas id="world" role="img" aria-label="昼夜地图"></canvas>
+    <div class="solar-event" id="solar-event" hidden>
+      <svg id="sunrise-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 24h26M6 29h20M8 24a8 8 0 0 1 16 0M16 2v12m-4-8 4-4 4 4M3 14l3 3m20 0 3-3M1 21h3m24 0h3"/></svg>
+      <svg id="sunset-icon" viewBox="0 0 32 32" aria-hidden="true" hidden><path d="M3 24h26M6 29h20M8 24a8 8 0 0 1 16 0M16 2v12m-4-4 4 4 4-4M3 14l3 3m20 0 3-3M1 21h3m24 0h3"/></svg>
+      <time id="solar-time">--:--</time>
+    </div>
+    <div class="clock-block">
+      <button class="place" id="place-button" type="button" aria-label="选择位置">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m28 4-8 24-5-11L4 12Z"/></svg>
+        <span id="place-name">定位中</span>
+      </button>
+      <time class="time" id="local-time" aria-label="当地时间">--:--</time>
+    </div>
+    <nav class="tools" aria-label="显示设置">
+      <button class="icon-button" id="locate" type="button" aria-label="定位" title="使用设备位置">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 1v4m0 14v4M1 12h4m14 0h4"/></svg>
+      </button>
+      <button class="icon-button" id="settings" type="button" aria-label="设置" title="位置与时间">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></svg>
+      </button>
+      <button class="icon-button" id="fullscreen" type="button" aria-label="全屏" title="全屏">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg>
+      </button>
+    </nav>
+    <p class="notice" id="notice" role="status" hidden></p>
+    <noscript><p class="notice">请启用 JavaScript 以显示时钟。</p></noscript>
+  </main>
+  <dialog id="preferences" aria-labelledby="preferences-title">
+    <div class="dialog-heading"><h1 id="preferences-title">位置与时间</h1><button class="icon-button" id="close-settings" type="button" aria-label="关闭">×</button></div>
+    <form id="location-form">
+      <label for="city">城市</label>
+      <select id="city" name="city">
+        <option value="">选择城市</option>
+        <option value="tianjin">天津市</option><option value="beijing">北京市</option><option value="shanghai">上海市</option>
+        <option value="hongkong">香港</option><option value="tokyo">东京</option><option value="singapore">新加坡</option>
+        <option value="london">伦敦</option><option value="paris">巴黎</option><option value="newyork">纽约</option>
+        <option value="losangeles">洛杉矶</option><option value="sydney">悉尼</option><option value="custom">自定义</option>
+      </select>
+      <fieldset id="custom-location" hidden>
+        <label for="custom-name">名称</label><input id="custom-name" maxlength="32" placeholder="当前位置" autocomplete="off">
+        <div class="coordinates"><div><label for="latitude">纬度</label><input id="latitude" type="number" min="-90" max="90" step="any" placeholder="39.08"></div><div><label for="longitude">经度</label><input id="longitude" type="number" min="-180" max="180" step="any" placeholder="117.20"></div></div>
+        <label for="timezone">时区</label><input id="timezone" placeholder="Asia/Shanghai" autocomplete="off" list="timezones">
+        <datalist id="timezones"><option value="Asia/Shanghai"><option value="Asia/Tokyo"><option value="Europe/London"><option value="America/New_York"><option value="Australia/Sydney"><option value="UTC"></datalist>
+      </fieldset>
+      <p class="form-error" id="form-error" role="alert"></p>
+      <div class="form-actions"><button type="button" class="secondary" id="auto-location">自动定位</button><button type="submit" class="primary">应用</button></div>
+    </form>
+    <div class="sources"><p id="location-source">位置：等待定位</p><p id="time-source">时间：本机时钟</p><p id="coordinate-display"></p></div>
+  </dialog>
+</body>
+</html>
